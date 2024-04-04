@@ -103,7 +103,18 @@ function onDoubleClick(event) {
   ctx.save();
   const text = textInput.value;
   ctx.lineWidth = 1;
-  // ctx.font = "80px Batang";
+
+  // * font 선언
+  let BlackHanSans = new FontFace(
+    "Black Han Sans",
+    "url(Users/jeongjayun/Downloads/Black_Han_Sans/BlackHanSans-Regular.ttf)"
+  );
+
+  BlackHanSans.load().then(() => {
+    console.log("Black Han Sans 폰트를 사용할 준비가 되었습니다.");
+  });
+  //
+  ctx.font = "100px Black Han Sans";
   ctx.fillText(text, event.offsetX, event.offsetY);
   ctx.restore();
 }
@@ -137,6 +148,7 @@ fileInput.addEventListener("change", onFileChange);
 save.addEventListener("click", onSaveClick);
 
 // 1. 텍스트의 폰트를 바꿔서 넣을 수 있게 바꾸기
+
 // 1-1. select 박스 선택
 const fontSelect = document.getElementById("font-select");
 // 1-2. option 값 읽기
@@ -146,7 +158,6 @@ function onFontChange() {
   let selectFontName = selectFont.text;
   console.log("selectFontValue", selectFontValue);
   console.log("selectFontName", selectFontName);
-  ctx.text = "80px `selectFontValue`";
 }
 
 fontSelect.addEventListener("change", onFontChange);
