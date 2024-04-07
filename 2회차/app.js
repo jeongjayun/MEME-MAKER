@@ -204,7 +204,6 @@ function onDblClick(event) {
 
   const text = textInput.value;
   ctx.lineWidth = 1;
-
   onFontSelect();
 
   isTextStroke
@@ -230,12 +229,9 @@ saveBtn.addEventListener("click", onSaveClick);
 /* 폰트 변경하기 */
 const fontSelect = document.getElementById("font-select");
 
-onFontLoad();
-
 // 추가 폰트 로드
 function onFontLoad() {
   let chab = new FontFace("Lotteria Chab", "url(../asset/fonts/chab.ttf)");
-
   chab.load().then(
     () => {
       // Ready to use the font in a canvas context
@@ -247,7 +243,6 @@ function onFontLoad() {
       console.log(chab);
     }
   );
-  ctx.font = "100px Lotteria Chab";
 
   let ddag = new FontFace("Lotteria Ddag", "url(../asset/fonts/ddag.ttf)");
   ddag.load().then(
@@ -273,6 +268,8 @@ function onTextSize(event) {
 }
 
 textSizeInput.addEventListener("change", onTextSize);
+
+onFontLoad();
 
 function onFontSelect() {
   const fontIndex = fontSelect.options[fontSelect.selectedIndex];
