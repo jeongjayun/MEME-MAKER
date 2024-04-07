@@ -1,18 +1,112 @@
+@import "reset.css";
+
+@font-face {
+  font-family: Lotteria Ddag;
+  src: url(../asset/fonts/ddag.woff2);
+}
+
+@font-face {
+  font-family: Lotteria Chob;
+  src: url(../asset/fonts/chab.woff2);
+}
+
+body {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: gainsboro;
+  padding: 20px;
+}
+
+canvas {
+  width: 800px;
+  height: 800px;
+  background-color: white;
+  border-radius: 15px;
+}
+
 body {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-canvas {
-  width: 800px;
-  height: 800px;
-  border: 5px solid gray;
+.btns {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.color-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
 }
 
 .color-option {
   width: 50px;
   height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform ease-in-out 0.1s;
+  border: 5px solid white;
+}
+
+.color-option:hover {
+  transform: scale(1.2);
+}
+
+input#color {
+  background-color: white;
+}
+
+button,
+label {
+  all: unset;
+  padding: 10px 0px;
+  text-align: center;
+  background-color: royalblue;
+  color: white;
+  font-weight: 500;
   cursor: pointer;
   border-radius: 10px;
+  transition: opacity linear 0.1s;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+input#file-input {
+  display: none;
+}
+
+input#text-input {
+  all: unset;
+  padding: 10px 0px;
+  border-radius: 10px;
+  font-weight: 500;
+  background-color: white;
+  text-align: center;
+}
+
+input#width-input,
+input#height-input {
+  all: unset;
+  text-align: center;
+  padding: 10px 0px;
+  border-radius: 10px;
+  background-color: white;
+  font-weight: 500;
+  width: 50px;
+}
+
+select {
+  border-radius: 10px;
+  height: 40px;
+  font-weight: 500;
+  text-align: center;
+  border: 0px;
 }
