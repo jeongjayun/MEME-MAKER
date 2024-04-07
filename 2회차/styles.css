@@ -1,15 +1,5 @@
 @import "reset.css";
 
-@font-face {
-  font-family: Lotteria Ddag;
-  src: url(../asset/fonts/ddag.woff2);
-}
-
-@font-face {
-  font-family: Lotteria Chob;
-  src: url(../asset/fonts/chab.woff2);
-}
-
 body {
   display: flex;
   gap: 20px;
@@ -35,7 +25,7 @@ body {
 .btns {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .color-options {
@@ -109,4 +99,61 @@ select {
   font-weight: 500;
   text-align: center;
   border: 0px;
+}
+
+input#brush-size {
+  all: unset;
+  text-align: center;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.draw-btns {
+  display: flex;
+}
+
+.draw-btns button {
+  flex: 1;
+  width: 50%;
+  margin: 5px;
+}
+
+.text-radios {
+  text-align: center;
+}
+
+.text-radios label {
+  all: unset;
+  margin-right: 20px;
+}
+
+.state {
+  background-color: white;
+  color: black;
+}
+
+input#ctx-state {
+  all: unset;
+  width: 50px;
+  text-align: center;
+}
+
+input#brush-state {
+  all: unset;
+  width: 50px;
+  text-align: center;
+}
+
+.text-size {
+  background-color: white;
+  color: black;
+}
+
+.text-size input[type="number"] {
+  width: 60px;
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
 }

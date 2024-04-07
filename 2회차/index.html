@@ -40,25 +40,80 @@
     <canvas></canvas>
 
     <div class="btns">
+      <label class="state">
+        현재
+        <input type="text" id="ctx-state" value="그리기" />
+        모드 입니다.
+      </label>
+
+      <button id="mode-btn">채우기</button>
+      <button id="eraser-btn">지우기</button>
+
+      <div class="draw-mode">
+        <div>
+          - Brush Style : <input type="text" id="brush-state" value="Stroke" />
+        </div>
+        <div class="draw-btns">
+          <button id="brush-stroke-btn">선</button>
+          <button id="brush-fill-btn">채워 그리기</button>
+        </div>
+      </div>
+
+      <div>
+        - Brush Size : <input type="text" id="brush-size" value="5" />px
+      </div>
       <input type="range" value="5" id="line-width" min="1" max="10" step="1" />
 
-      <button id="mode-btn">fill</button>
-      <button id="destroy-btn">destroy</button>
-      <button id="eraser-btn">eraser</button>
+      <button id="destroy-btn">전체 지우기</button>
 
-      <label for="file">
-        Add Photo
+      <label for="file-input">
+        이미지 추가
         <input type="file" id="file-input" accept="image/*" />
       </label>
 
-      <input type="text" id="text-input" placeholder="여기에 텍스트를 ..." />
+      <input
+        type="text"
+        id="text-input"
+        placeholder="텍스트 입력 후 캔버스에서 더블 클릭!"
+      />
 
       <select id="font-select">
-        <option value="chab">롯데리아 챱땡겨체</option>
-        <option value="ddag">롯데리아 딱붙어체</option>
+        <option class="font-option" value="serif">serif</option>
+        <option class="font-option" value="dotum">dotum</option>
+        <option class="font-option" value="gulim">gulim</option>
+        <option class="font-option" value="chab">롯데리아 챱땡겨체</option>
+        <option class="font-option" value="ddag">롯데리아 딱붙어체</option>
       </select>
 
-      <button id="save-btn">save</button>
+      <label class="text-size">
+        Text Size :
+        <input
+          type="number"
+          id="text-size"
+          value="50"
+          step="10"
+          min="10"
+          max="100"
+        />
+        px
+      </label>
+
+      <div class="text-radios">
+        <label for="text-fill"
+          ><input
+            type="radio"
+            name="text-state"
+            id="text-fill"
+            checked="checked"
+          />폰트 채우기</label
+        >
+        <label for="text-stroke"
+          ><input type="radio" name="text-state" id="text-stroke" />폰트
+          외곽선</label
+        >
+      </div>
+
+      <button id="save-btn">저장하기</button>
     </div>
 
     <script src="app.js"></script>

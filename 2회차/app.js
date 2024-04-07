@@ -8,14 +8,34 @@ let CANVAS_HEIGHT = 800;
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT; // 사이즈를 지정해주지 않으면 크기가 안맞음
 
+// State 알려주기
+const brushState = document.getElementById("brush-state");
+const ctxState = document.getElementById("ctx-state");
+
 // 2. 마우스로 선을 그을 때
 //    마우스 버튼을 누르고 있으면 선을 긋고, 버튼을 떼면 포인터 이동만 한다.
 let isPainting = false;
+let isBrushFill = false; // 2-1. 선 모드 or 선 채우기 모드
+
+const brushStrokeBtn = document.getElementById("brush-stroke-btn");
+const brushFillBtn = document.getElementById("brush-fill-btn");
+
+function onBrushStroke() {
+  isBrushFill = false;
+  brushState.value = "Stroke";
+}
+brushStrokeBtn.addEventListener("click", onBrushStroke);
+
+function onBrushFill() {
+  isBrushFill = true;
+  brushState.value = "Fill";
+}
+brushFillBtn.addEventListener("click", onBrushFill);
 
 function onMove(event) {
   if (isPainting) {
     ctx.lineTo(event.offsetX, event.offsetY);
-    ctx.stroke();
+    isBrushFill ? ctx.fill() : ctx.stroke();
     return;
   }
   ctx.beginPath(); // 기존의 path를 끊고 새로운 path 시작
@@ -47,12 +67,15 @@ canvas.addEventListener("mouseleave", cancelPainting);
 
 // 3. 브러쉬의 굵기변경
 const lineWidth = document.getElementById("line-width");
+// 3-1. 현재 브러쉬의 사이즈 텍스트로 보여주기
+const brushSize = document.getElementById("brush-size");
 
 ctx.lineWidth = lineWidth.value; // 브러쉬 굵기
 ctx.lineCap = "round"; // 브러쉬 둥글게
+
 function onLineWidthChange(event) {
   ctx.lineWidth = event.target.value;
-  console.log("lineWidth : ", lineWidth.value);
+  brushSize.value = event.target.value;
 }
 lineWidth.addEventListener("change", onLineWidthChange);
 
@@ -93,11 +116,15 @@ function onModeClick() {
   if (isFilling) {
     // 만약 사용자가 채우기 모드"일" 때
     isFilling = false; // 버튼 클릭하면 채우기 모드를 중지
-    modeBtn.innerText = "Fill"; // 버튼의 텍스트를 Fill 로 바꿔 모드가 변경됨 표시
+    ctxState.value = "그리기";
+    modeBtn.innerText = "채우기"; // 버튼의 텍스트를 Draw로 바꿔 모드가 변경됨 표시
+    document.querySelector(".draw-mode").style.display = "block";
   } else {
     // 만약 사용자가 채우기 모드가 "아닐" 때 이 버튼을 누르면
     isFilling = true; // 채우기 모드 실행
-    modeBtn.innerText = "Draw";
+    ctxState.value = "채우기";
+    modeBtn.innerText = "그리기";
+    document.querySelector(".draw-mode").style.display = "none";
   }
 }
 modeBtn.addEventListener("click", onModeClick);
@@ -115,8 +142,10 @@ canvas.addEventListener("click", onCanvasClick);
 const destroyBtn = document.getElementById("destroy-btn");
 
 function onDestoryClick() {
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (confirm("전부 지워집니다. 지우시겠습니까?")) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 }
 destroyBtn.addEventListener("click", onDestoryClick);
 
@@ -124,11 +153,16 @@ destroyBtn.addEventListener("click", onDestoryClick);
 const eraserBtn = document.getElementById("eraser-btn");
 
 function onEraserClick() {
-  ctx.strokeStyle = "white";
+  ctxState.value = "지우기";
   isFilling = false;
-  modeBtn.innerText = "Fill";
-}
 
+  if (isBrushFill) {
+    isBrushFill = false;
+  }
+
+  ctx.strokeStyle = "white";
+  modeBtn.innerText = "채우기";
+}
 eraserBtn.addEventListener("click", onEraserClick);
 
 // 7. 파일 업로드
@@ -141,7 +175,7 @@ function onFileChange(event) {
   image.src = url;
   image.onload = function () {
     ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    // fileInput.value = null;
+    fileInput.value = null;
   };
 }
 fileInput.addEventListener("change", onFileChange);
@@ -149,16 +183,33 @@ fileInput.addEventListener("change", onFileChange);
 // 8. 텍스트 추가
 const textInput = document.getElementById("text-input");
 
+/* 폰트 스타일 변경 */
+let isTextStroke = false; // 꽉채운 글씨
+
+const textFill = document.getElementById("text-fill");
+const textStroke = document.getElementById("text-stroke");
+
+function onTextFill() {
+  isTextStroke = false;
+}
+textFill.addEventListener("click", onTextFill);
+
+function onTextStroke() {
+  isTextStroke = true;
+}
+textStroke.addEventListener("click", onTextStroke);
+
 function onDblClick(event) {
   ctx.save();
 
   const text = textInput.value;
   ctx.lineWidth = 1;
-  // ctx.font = "48px serif";
+
   onFontSelect();
-  console.log(text);
-  console.log(event.offsetX, event.offsetY);
-  ctx.strokeText(text, event.offsetX, event.offsetY);
+
+  isTextStroke
+    ? ctx.strokeText(text, event.offsetX, event.offsetY)
+    : ctx.fillText(text, event.offsetX, event.offsetY);
 
   ctx.restore();
 }
@@ -173,51 +224,59 @@ function onSaveClick(event) {
   a.href = url;
   a.download = "myDrawing.png";
   a.click();
-
-  // console.log(url);
-  // console.log(a);
 }
 saveBtn.addEventListener("click", onSaveClick);
 
 /* 폰트 변경하기 */
 const fontSelect = document.getElementById("font-select");
 
+onFontLoad();
+
+// 추가 폰트 로드
+function onFontLoad() {
+  let chab = new FontFace("Lotteria Chab", "url(../asset/fonts/chab.ttf)");
+
+  chab.load().then(
+    () => {
+      // Ready to use the font in a canvas context
+      console.log(chab);
+    },
+    (error) => {
+      alert("error", error);
+      console.error(error);
+      console.log(chab);
+    }
+  );
+  ctx.font = "100px Lotteria Chab";
+
+  let ddag = new FontFace("Lotteria Ddag", "url(../asset/fonts/ddag.ttf)");
+  ddag.load().then(
+    () => {
+      // Ready to use the font in a canvas context
+      console.log(ddag);
+    },
+    (error) => {
+      alert("error", error);
+      console.error(error);
+      console.log(ddag);
+    }
+  );
+}
+
+// 폰트 크기 조절
+const textSizeInput = document.getElementById("text-size");
+let textSize = 50;
+let fontFamily = "serif";
+
+function onTextSize(event) {
+  textSize = event.target.value;
+}
+
+textSizeInput.addEventListener("change", onTextSize);
+
 function onFontSelect() {
-  const font = fontSelect.options[fontSelect.selectedIndex];
-  let selectedFontValue = font.value;
-
-  if (selectedFontValue == "chab") {
-    let chab = new FontFace("Lotteria Chab", "url(../asset/fonts/chab.woff2)");
-
-    chab.load().then(
-      () => {
-        // Ready to use the font in a canvas context
-        console.log(chab);
-        console.log(selectedFontValue);
-      },
-      (error) => {
-        alert("error", error);
-        console.error(error);
-        console.log(chab);
-      }
-    );
-    ctx.font = "100px Lotteria Chab";
-  } else if (selectedFontValue == "ddag") {
-    let ddag = new FontFace("Lotteria Ddag", "url(../asset/fonts/ddag.woff2)");
-
-    ddag.load().then(
-      () => {
-        // Ready to use the font in a canvas context
-        console.log(selectedFontValue);
-        console.log(ddag);
-      },
-      (error) => {
-        alert("error", error);
-        console.error(error);
-        console.log(ddag);
-      }
-    );
-    ctx.font = "100px Lotteria Ddag";
-  }
+  const fontIndex = fontSelect.options[fontSelect.selectedIndex];
+  fontFamily = fontIndex.value;
+  ctx.font = `${textSize}px ${fontFamily}`;
 }
 fontSelect.addEventListener("change", onFontSelect);
