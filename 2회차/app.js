@@ -14,6 +14,7 @@ const ctxState = document.getElementById("ctx-state");
 
 // 2. 마우스로 선을 그을 때
 //    마우스 버튼을 누르고 있으면 선을 긋고, 버튼을 떼면 포인터 이동만 한다.
+
 let isPainting = false;
 let isBrushFill = false; // 2-1. 선 모드 or 선 채우기 모드
 
@@ -33,12 +34,21 @@ function onBrushFill() {
 brushFillBtn.addEventListener("click", onBrushFill);
 
 function onMove(event) {
+  // console.log(event.offsetX, event.offsetY);
+
+  ctx.lineTo(event.offsetX, event.offsetY);
   if (isPainting) {
+    // console.log(event.offsetX, event.offsetY);
     ctx.lineTo(event.offsetX, event.offsetY);
     isBrushFill ? ctx.fill() : ctx.stroke();
     return;
   }
+
+  // ctx.stroke(); /* 아까 안됐던 이유! 모드 설정하는 변수 if문 안에 stroke() 있어서!! */
+
   ctx.beginPath(); // 기존의 path를 끊고 새로운 path 시작
+  // beginPath 가 없으면 선이 계속 이어지고 색 변경도 안됨!
+
   ctx.moveTo(event.offsetX, event.offsetY);
 }
 canvas.addEventListener("mousemove", onMove);
@@ -96,6 +106,7 @@ const colorOptions = Array.from(
 ); //HTMLCollection으로 Array like 객체(Array 아님!!!)를 자바스크립트 배열객체로 생성
 
 function onColorClick(event) {
+  console.log(event);
   // console.dir(event.target.dataset.color); 중복값 제거
   const colorValue = event.target.dataset.color;
 
@@ -170,8 +181,10 @@ const fileInput = document.getElementById("file-input");
 
 function onFileChange(event) {
   const file = event.target.files[0];
+  console.log(event);
   const url = URL.createObjectURL(file);
   const image = new Image();
+  console.log(url);
   image.src = url;
   image.onload = function () {
     ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -204,6 +217,7 @@ function onDblClick(event) {
 
   const text = textInput.value;
   ctx.lineWidth = 1;
+
   onFontSelect();
 
   isTextStroke
@@ -230,33 +244,59 @@ saveBtn.addEventListener("click", onSaveClick);
 const fontSelect = document.getElementById("font-select");
 
 // 추가 폰트 로드
-function onFontLoad() {
-  let chab = new FontFace("Lotteria Chab", "url(../asset/fonts/chab.ttf)");
-  chab.load().then(
-    () => {
-      // Ready to use the font in a canvas context
-      console.log(chab);
-    },
-    (error) => {
-      alert("error", error);
-      console.error(error);
-      console.log(chab);
-    }
-  );
+// function onFontLoad() {
+//   let chab = new FontFace("Chab", "url(../asset/fonts/chab.woff2)");
+//   chab.load().then(
+//     () => {
+//       // Ready to use the font in a canvas context
+//       console.log("chab 폰트 load 되었습니다.");
+//     },
+//     (error) => {
+//       alert("error", error);
+//       console.error(error);
+//       console.log(chab);
+//     }
+//   );
 
-  let ddag = new FontFace("Lotteria Ddag", "url(../asset/fonts/ddag.ttf)");
-  ddag.load().then(
-    () => {
-      // Ready to use the font in a canvas context
-      console.log(ddag);
-    },
-    (error) => {
-      alert("error", error);
-      console.error(error);
-      console.log(ddag);
-    }
-  );
-}
+//   let ddag = new FontFace("Ddag", "url(../asset/fonts/ddag.woff2)");
+//   ddag.load().then(
+//     () => {
+//       // Ready to use the font in a canvas context
+//       console.log("ddag 폰트 load 되었습니다.");
+//     },
+//     (error) => {
+//       alert("error", error);
+//       console.error(error);
+//       console.log(ddag);
+//     }
+//   );
+// }
+
+const chab = new FontFace("Lotteria Chab", "url(../asset/fonts/chab.ttf)");
+chab.load().then(
+  () => {
+    // Ready to use the font in a canvas context
+    console.log("chab 폰트 사용할 준비가 되었습니다.");
+  },
+  (error) => {
+    alert("error", error);
+    console.error(error);
+    console.log(chab);
+  }
+);
+
+const ddag = new FontFace("Lotteria Ddag", "url(../asset/fonts/ddag.ttf)");
+ddag.load().then(
+  () => {
+    // Ready to use the font in a canvas context
+    console.log("ddag 폰트 사용할 준비가 되었습니다.");
+  },
+  (error) => {
+    alert("error", error);
+    console.error(error);
+    console.log(ddag);
+  }
+);
 
 // 폰트 크기 조절
 const textSizeInput = document.getElementById("text-size");
@@ -269,11 +309,12 @@ function onTextSize(event) {
 
 textSizeInput.addEventListener("change", onTextSize);
 
-onFontLoad();
-
 function onFontSelect() {
   const fontIndex = fontSelect.options[fontSelect.selectedIndex];
+  console.log(fontIndex);
   fontFamily = fontIndex.value;
+  console.log(fontFamily);
+
   ctx.font = `${textSize}px ${fontFamily}`;
 }
 fontSelect.addEventListener("change", onFontSelect);
